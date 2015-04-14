@@ -32,12 +32,7 @@ public class Column extends CardStack
 
     public Card push(Card card)
     {
-        if(isEmpty() && card.getNumber() == Card.KING)
-        {
-            super.push(card);
-            return card;
-        }
-        else if(card.getColor() != peek().getColor() && card.getNumber() == peek().getNumber() - 1)
+        if (isValidMove(card))
         {
             super.push(card);
             return card;
@@ -54,7 +49,7 @@ public class Column extends CardStack
         }
         else if(!isEmpty() && card.getColor() != peek().getColor() && card.getNumber() == (peek().getNumber() - 1))
         {
-            return false;
+            return true;
         }
 
         return false;
