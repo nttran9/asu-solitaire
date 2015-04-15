@@ -26,18 +26,18 @@ public class ColumnTest
 	public Object[][] createCards()
 	{
 		Object[][] cards = new Object[53][1];
-		
+		 
 		for (int i = Card.ACE + (13 * 0); i <= Card.KING + (13 * 0); ++i)
-			cards[i-1] = new Object[] { new Card(Card.SPADES_SUIT, i, 0, 0) };
+			cards[i-1] = new Object[] { new Card(Card.SPADES_SUIT, ((i - 1) % 13) + 1, 0, i) };
 		
 		for (int i = Card.ACE + (13 * 1); i <= Card.KING + (13 * 1); ++i)
-			cards[i-1] = new Object[] { new Card(Card.CLUBS_SUIT, i, 0, 0) };
+			cards[i-1] = new Object[] { new Card(Card.CLUBS_SUIT, ((i - 1) % 13) + 1, 0, i) };
 		
 		for (int i = Card.ACE + (13 * 2); i <= Card.KING + (13 * 2); ++i)
-			cards[i-1] = new Object[] { new Card(Card.HEARTS_SUIT, i, 0, 0) };
+			cards[i-1] = new Object[] { new Card(Card.HEARTS_SUIT, ((i - 1) % 13) + 1, 0, i) };
 		
 		for (int i = Card.ACE + (13 * 3); i <= Card.KING + (13 * 3); ++i)
-			cards[i-1] = new Object[] { new Card(Card.DIAMONDS_SUIT, i, 0, 0) };
+			cards[i-1] = new Object[] { new Card(Card.DIAMONDS_SUIT, ((i - 1) % 13) + 1, 0, i) };
 		
 		cards[52] = new Object[] { new Card(Card.INVALID_SUIT, Card.INVALID_NUMBER, 0, 0) };
 		
