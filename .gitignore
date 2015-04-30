@@ -1,0 +1,8 @@
+# Eclipse Project Files #
+/.settings
+.classpath
+.project
+
+# Maven Output Folders #
+/target
+/test-output
