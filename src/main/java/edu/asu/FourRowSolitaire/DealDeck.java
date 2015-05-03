@@ -23,168 +23,129 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
 import java.util.LinkedList;
+
 import javax.swing.JOptionPane;
 
 /**
- * Class: DealDeck
- *
- * Description: The DealDeck class manages the leftover cards after the deal out.
+ * This class represents the DealDeck, which is a stack of cards. This deck 
+ * manages the cards that are left over after the board initially deals out
+ * the deck.
+ * <p>
+ * Every Four Row Solitaire board contains only one DealDeck. When the player
+ * clicks on the DealDeck, either 1 or 3 cards (depending on the the {@code
+ * drawCount} are popped to the DiscardPile, where the player can move the 
+ * card(s) to the playing field.
+ * <p>
+ * Depending on the difficulty and the {@code drawCount} of the current game, 
+ * the player is allowed to draw through the deck anywhere from 1 (hardest) 
+ * to 4 (easiest) times before the game is lost.
  *
  * @author Matt Stephen
  */
+@SuppressWarnings("serial")
 public class DealDeck extends CardStack
 {
-    private DiscardPile discardPile;
-    private int numTimesThroughDeck = 1;
-
-    private int drawCount = 1;
-    private int difficulty = 2; //1, 2, or 3
-
-    private static final int DRAW_ONE_THROUGH_LIMIT = 2;
+    private static final int DRAW_ONE_THROUGH_LIMIT   = 2;
     private static final int DRAW_THREE_THROUGH_LIMIT = 3;
-
-    private static final int EASY_THROUGH_LIMIT = 3; //Number of deck throughs for each difficulty
-    private static final int MEDIUM_THROUGH_LIMIT = 2; //Three card draw adds 1 to each
-    private static final int HARD_THROUGH_LIMIT = 1;
-
+    
+    /*
+     * The number of deck throughs for each difficulty. Three card drawing adds
+     * one more through to each difficulty level.
+     */
+    private static final int EASY_THROUGH_LIMIT   = 3;
+    private static final int MEDIUM_THROUGH_LIMIT = 2;
+    private static final int HARD_THROUGH_LIMIT   = 1;
+    
+    private DiscardPile discardPile;
+    private int numTimesThroughDeck;
+    private int drawCount;
+    
     private int deckThroughLimit;
-    private boolean redealable = true;
+    private boolean isRedealable;
 
+    /**
+     * Constructs a new DealDeck.
+     * 
+     * @param discard a DiscardPile to deal cards to
+     * @param drawCount how cards are drawn at a time from the DealDeck
+     */
     public DealDeck(DiscardPile discard, int drawCount)
     {
         discardPile = discard;
-        this.drawCount = drawCount;
-
-        if(drawCount == 3)
-        {
-            deckThroughLimit = DRAW_THREE_THROUGH_LIMIT;
-        }
-        else
-        {
-            deckThroughLimit = DRAW_ONE_THROUGH_LIMIT;
-        }
-
+        numTimesThroughDeck = 1;
+        isRedealable = true;
+        
+        setDrawCount(drawCount);
         discard.setDrawCount(drawCount);
     }
-
-    public void reset()
-    {
-        numTimesThroughDeck = 1;
-    }
-
-    private void undone()
-    {
-        numTimesThroughDeck--;
-    }
-
-    public int getDeckThroughs()
-    {
-        return numTimesThroughDeck;
-    }
-
-    public void setDeckThroughs(int throughs)
-    {
-        numTimesThroughDeck = throughs;
-    }
-
+    
+    /**
+     * Initially set up the DealDeck.
+     * 
+     * @param cards the cards that will make up the DealDeck
+     */
     public void setDeck(LinkedList<Card> cards)
     {
-        for(int i = 0; i < cards.size(); i++)
+        for (int i = 0; i < cards.size(); i++)
         {
             cards.get(i).setFaceDown();
-            addCard(cards.get(i));
+            push(cards.get(i));
         }
     }
-
-    public void setDrawCount(int draw)
-    {
-        drawCount = draw;
-        discardPile.setDrawCount(draw);
-
-        if(drawCount == 3)
-        {
-            deckThroughLimit = DRAW_THREE_THROUGH_LIMIT;
-        }
-        else
-        {
-            deckThroughLimit = DRAW_ONE_THROUGH_LIMIT;
-        }
-    }
-
-    public void setDifficulty(int difficulty)
-    {
-        this.difficulty = difficulty;
-
-        if(difficulty == 1)
-        {
-            deckThroughLimit = EASY_THROUGH_LIMIT;
-        }
-        else if(difficulty == 3)
-        {
-            deckThroughLimit = HARD_THROUGH_LIMIT;
-        }
-        else //if(difficulty == 2)
-        {
-            deckThroughLimit = MEDIUM_THROUGH_LIMIT;
-        }
-
-        if(drawCount == 3)
-        {
-            deckThroughLimit++; //draw three has an extra deck through on top of the single card setting
-        }
-    }
-
-    public boolean hasDealsLeft()
-    {
-        return redealable;
-    }
-
+    
+    /**
+     * Pop {@code drawCount} number of cards from the DealDeck.
+     * 
+     * @return the last Card popped from the DealDeck
+     */
+    @Override
     public synchronized Card pop()
     {
-        if(!isEmpty())
+        if (!isEmpty())
         {
-            //Verify there are still cards remaining
-            if(drawCount == 1)
+            // draw one card
+            if (drawCount == 1)
             {
                 Card card = super.pop();
-
+                
                 card.setFaceUp();
                 discardPile.push(card);
-
+                
                 this.repaint();
                 return card;
             }
+            // draw three cards
             else
             {
                 int tempDrawCount = drawCount;
                 CardStack tempStack = new CardStack();
-
-                while(drawCount > 1 && tempDrawCount > 0 && !isEmpty())
+                
+                while (drawCount > 1 && tempDrawCount > 0 && !isEmpty())
                 {
                     Card card = super.pop();
-
+                    
                     card.setFaceUp();
                     tempStack.push(card);
-
+                    
                     tempDrawCount--;
                 }
-
-                CardStack tempStack2 = new CardStack(); //To put the cards back in order because the previous step reversed them
-
-                for(int i = tempStack.length(); i > 0; i--)
-                {
+                
+                // to put the cards back in order because the previous step reversed them
+                CardStack tempStack2 = new CardStack();
+                
+                for (int i = tempStack.length(); i > 0; i--)
                     tempStack2.push(tempStack.pop());
-                }
-
+                
                 discardPile.push(tempStack2);
-
+                
                 this.repaint();
                 return discardPile.peek();
             }
         }
-        else if(!discardPile.isEmpty() && numTimesThroughDeck < deckThroughLimit)
+        // reset the DealDeck if deckThroughLimit has not been reached yet
+        else if (!discardPile.isEmpty() && isRedealable)
         {
-            for(int i = discardPile.length(); i > 0; i--)
+            for (int i = discardPile.length(); i > 0; i--)
             {
                 Card card = discardPile.pop();
                 card.setFaceDown();
@@ -195,51 +156,171 @@ public class DealDeck extends CardStack
             discardPile.repaint();
             numTimesThroughDeck++;
         }
-        else if(numTimesThroughDeck >= deckThroughLimit)
+        // otherwise show dialog box informing user that the limit has been reached
+        else if (numTimesThroughDeck >= deckThroughLimit)
         {
-            redealable = false;
+            isRedealable = false;
             JOptionPane.showMessageDialog(null, "You have reached your deck through limit.");
         }
-
+        
         this.repaint();
         return null;
     }
-
+    
+    /**
+     * Undo a pop operation.
+     */
     public synchronized void undoPop()
     {
-        while(!isEmpty())
+        while (!isEmpty())
         {
             Card card = super.pop();
             card.setFaceUp();
             discardPile.push(card);
         }
-
+        
         undone();
-
-        if(!redealable)
-        {
-            redealable = true;
-        }
+        
+        if(!isRedealable)
+            isRedealable = true;
         
         discardPile.repaint();
         this.repaint();
     }
-
+    
+    /**
+     * Returns the topmost Card located at the specified coordinate point.
+     * <p>
+     * Because the cards in an DealDeck directly overlay each other without
+     * an offset, there is not need to use logic to deduce which card is 
+     * directly underneath the point. It will always be the top card.
+     * 
+     * @param p the point location of the Card to return
+     * @return the Card located at the specified point; null if the specified
+     * point is not defined in the area of a card in this CardStack
+     */
+    @Override
     public Card getCardAtLocation(Point p)
     {
         return peek();
     }
-
+    
+    /**
+     * Tests if adding a specified Card to this CardStack is a valid move.
+     * Returns true if adding the Card to this CardStack is valid move; 
+     * false otherwise.
+     * <p>
+     * <b>Note:</b> Adding a Card to the DealDeck is not allowed in Four Row 
+     * Solitaire. As such, this method will always return false.
+     * 
+     * @param card a Card to add to this CardStack
+     * @return false
+     */
+    @Override
     public boolean isValidMove(Card card)
     {
         return false;
     }
-
+    
+    /**
+     * Tests is adding a specified CardStack to this CardStack is a valid move.
+     * Returns true if adding the CardStack to this CardStack is a valid move; 
+     * false otherwise.
+     * <p>
+     * <b>Note:</b> Adding a CardStack to the DealDeck is not allowed in Four Row 
+     * Solitaire. As such, this method will always return false.
+     * 
+     * @param stack a CardStack to add to this CardStack
+     * @return false
+     */
+    @Override
     public boolean isValidMove(CardStack stack)
     {
         return false;
     }
+    
+    /**
+     * Resets the deck through counter.
+     */
+    public void reset()
+    {
+        numTimesThroughDeck = 1;
+    }
+    
+    /**
+     * Decrement the deck through counter by 1.
+     */
+    private void undone()
+    {
+        numTimesThroughDeck--;
+    }
 
+    /**
+     * Returns the number of deck throughs so far.
+     * 
+     * @return the number of deck throughs so far
+     */
+    public int getDeckThroughs()
+    {
+        return numTimesThroughDeck;
+    }
+    
+    /**
+     * Set the deck through counter.
+     * 
+     * @param throughs the number of throughs 
+     */
+    public void setDeckThroughs(int throughs)
+    {
+        numTimesThroughDeck = throughs;
+    }
+    
+    /**
+     * Set the number of cards that are dealt each time from the DealDeck.
+     * 
+     * @param drawCount number of cards to deal from the DealDeck
+     */
+    public void setDrawCount(int drawCount)
+    {
+        this.drawCount = drawCount;
+        discardPile.setDrawCount(drawCount);
+
+        if (this.drawCount == 3)
+            deckThroughLimit = DRAW_THREE_THROUGH_LIMIT;
+        else
+            deckThroughLimit = DRAW_ONE_THROUGH_LIMIT;
+    }
+    
+    /**
+     * Sets the deck through limit based on the difficulty.
+     * 
+     * @param difficulty game difficulty (1 - 3)
+     */
+    public void setDifficulty(int difficulty)
+    {
+        if (difficulty == 1)
+            deckThroughLimit = EASY_THROUGH_LIMIT;
+        else if (difficulty == 2)
+            deckThroughLimit = MEDIUM_THROUGH_LIMIT;
+        else  // if (difficulty == 3)
+            deckThroughLimit = HARD_THROUGH_LIMIT;
+        
+        // draw three has an extra deck through on top of the single card setting
+        if (drawCount == 3)
+            deckThroughLimit++;
+    }
+    
+    /**
+     * Returns true if the DealDeck has deck throughs left; false otherwise.
+     * 
+     * @return true if the DealDeck has deck throughs left; false otherwise
+     */
+    public boolean hasDealsLeft()
+    {
+        return isRedealable;
+    }
+    
+    @Override
     public void paint(Graphics g)
     {
         super.paint(g);
