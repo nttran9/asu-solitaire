@@ -192,11 +192,11 @@ public class SolitaireBoard extends JFrame
 
                 if(i < 5)
                 {
-                    columns[j].addCard(card);
+                    columns[j].push(card);
                 }
                 else
                 {
-                    cells[j].addCard(card);
+                    cells[j].push(card);
                 }
             }
         }
@@ -259,60 +259,60 @@ public class SolitaireBoard extends JFrame
 
             if(pileNumber == 0)
             {
-                cells[0].addCard(cards.get(cardNumber));
+                cells[0].push(cards.get(cardNumber));
             }
             else if(pileNumber == 1)
             {
-                cells[1].addCard(cards.get(cardNumber));
+                cells[1].push(cards.get(cardNumber));
             }
             else if(pileNumber == 2)
             {
-                cells[2].addCard(cards.get(cardNumber));
+                cells[2].push(cards.get(cardNumber));
             }
             else if(pileNumber == 3)
             {
-                cells[3].addCard(cards.get(cardNumber));
+                cells[3].push(cards.get(cardNumber));
             }
 
             else if(pileNumber == 4)
             {
-                columns[0].addCard(cards.get(cardNumber));
+                columns[0].push(cards.get(cardNumber));
             }
             else if(pileNumber == 5)
             {
-                columns[1].addCard(cards.get(cardNumber));
+                columns[1].push(cards.get(cardNumber));
             }
             else if(pileNumber == 6)
             {
-                columns[2].addCard(cards.get(cardNumber));
+                columns[2].push(cards.get(cardNumber));
             }
             else if(pileNumber == 7)
             {
-                columns[3].addCard(cards.get(cardNumber));
+                columns[3].push(cards.get(cardNumber));
             }
 
             else if(pileNumber == 8)
             {
-                acePiles[0].addCard(cards.get(cardNumber));
+                acePiles[0].push(cards.get(cardNumber));
             }
             else if(pileNumber == 9)
             {
-                acePiles[1].addCard(cards.get(cardNumber));
+                acePiles[1].push(cards.get(cardNumber));
             }
             else if(pileNumber == 10)
             {
-                acePiles[2].addCard(cards.get(cardNumber));
+                acePiles[2].push(cards.get(cardNumber));
             }
             else if(pileNumber == 11)
             {
-                acePiles[3].addCard(cards.get(cardNumber));
+                acePiles[3].push(cards.get(cardNumber));
             }
 
             else if(pileNumber == 12)
             {
                 Card card = cards.get(cardNumber);
                 card.setFaceDown();
-                dealDeck.addCard(card);
+                dealDeck.push(card);
             }
             else if(pileNumber == 13)
             {
@@ -1207,12 +1207,12 @@ public class SolitaireBoard extends JFrame
 
                 if(num == 1)
                 {
-                    tempSource.addCard(tempDest.pop());
+                    tempSource.push(tempDest.pop());
                 }
                 else
                 {
                     CardStack temp = tempDest.getStack(num);
-                    tempSource.addStack(temp);
+                    tempSource.push(temp);
                 }
 
                 discardPile.setView(numDiscard);
@@ -1234,7 +1234,7 @@ public class SolitaireBoard extends JFrame
                 {
                     Card card = discardPile.undoPop();
                     card.setFaceDown();
-                    dealDeck.addCard(card);
+                    dealDeck.push(card);
                 }
 
                 discardPile.setView(numDiscard);
