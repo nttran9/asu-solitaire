@@ -39,6 +39,7 @@ public class SingleCell extends CardStack
      * @param card the card to be pushed onto this CardStack
      * @return the card that was pushed onto this CardStack
      */
+    @Override
     public Card push(Card card)
     {
         if (isEmpty())
@@ -61,6 +62,7 @@ public class SingleCell extends CardStack
      * @return the Card located at the specified point; null if the specified
      * point is not defined in the area of a card in this CardStack
      */
+    @Override
     public Card getCardAtLocation(Point p)
     {
         return peek();
@@ -77,6 +79,7 @@ public class SingleCell extends CardStack
      * @param card a Card to add to this CardStack
      * @return true if move is valid; false otherwise
      */
+    @Override
     public boolean isValidMove(Card card)
     {
         return isEmpty() ? true : false;
@@ -93,6 +96,7 @@ public class SingleCell extends CardStack
      * @param stack a CardStack to add to this CardStack
      * @return false
      */
+    @Override
     public boolean isValidMove(CardStack stack)
     {
         return false;
