@@ -115,7 +115,7 @@ public class Card extends JComponent implements Cloneable
             URL imageURL = this.getClass().getClassLoader().getResource(cardHighlighted);
             if (imageURL != null) image = ImageIO.read(imageURL);
         }
-        catch(IOException ex)
+        catch (IOException ex)
         {
             System.err.println("Error in creating highlighted card face image.");
         }
@@ -173,7 +173,7 @@ public class Card extends JComponent implements Cloneable
             URL imageURL = this.getClass().getClassLoader().getResource(cardBack);
             if (imageURL != null) image = ImageIO.read(imageURL);
         }
-        catch(IOException ex)
+        catch (IOException ex)
         {
             System.err.println("Error in creating card back image.");
         }
