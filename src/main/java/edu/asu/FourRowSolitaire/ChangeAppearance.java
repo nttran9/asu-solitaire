@@ -21,6 +21,7 @@ package edu.asu.FourRowSolitaire;
 
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 
 /**
@@ -153,6 +154,11 @@ public class ChangeAppearance extends JDialog implements ActionListener
         ok.addActionListener(this);
     }
 
+    public static boolean isValidDeckNumber(int n)
+    {
+        return (n >= 1 && n <= NUM_DECKS) ? true : false;
+    }
+    
     public int getDeckNumber()
     {
         if(!exited)

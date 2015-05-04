@@ -128,6 +128,6 @@ public class Column extends CardStack
      */
     private boolean isKing(Card card)
     {
-        return card.getNumber() == Card.KING;
+        return card.getNumber() == CardNumber.KING;
     }
 }

@@ -143,8 +143,10 @@ public class DealDeck extends CardStack
             }
         }
         // reset the DealDeck if deckThroughLimit has not been reached yet
-        else if (!discardPile.isEmpty() && isRedealable)
+        else if (!discardPile.isEmpty() && numTimesThroughDeck < deckThroughLimit)
         {
+            System.out.println("Reset DealDeck " + numTimesThroughDeck + " " + deckThroughLimit);
+            
             for (int i = discardPile.length(); i > 0; i--)
             {
                 Card card = discardPile.pop();

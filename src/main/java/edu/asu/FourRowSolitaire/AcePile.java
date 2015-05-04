@@ -44,16 +44,16 @@ import java.awt.Point;
 @SuppressWarnings("serial")
 public class AcePile extends CardStack
 {
-    private String suit;
+    private CardSuit suit;
     
     /**
      * Constructs a new AcePile with a specified suit.
      * 
-     * @param suit suit type
+     * @param spades suit type
      */
-    public AcePile(String suit)
+    public AcePile(CardSuit spades)
     {
-        this.suit = suit;
+        this.suit = spades;
     }
 
     /**
@@ -61,7 +61,7 @@ public class AcePile extends CardStack
      * 
      * @return suit of the AcePile
      */
-    public String getSuit()
+    public CardSuit getSuit()
     {
         return suit;
     }
@@ -146,7 +146,7 @@ public class AcePile extends CardStack
      */
     private boolean isAce(Card card)
     {
-        return card.getNumber() == Card.ACE;
+        return card.getNumber() == CardNumber.ACE;
     }
     
     /**

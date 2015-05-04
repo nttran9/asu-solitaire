@@ -170,6 +170,8 @@ public class CardStack extends JLayeredPane
      */
     public Card getCardAtLocation(Point p)
     {
+        System.out.println("getCardAtLocation()");
+        
         if (cards.isEmpty())
             return null;
         
@@ -183,6 +185,8 @@ public class CardStack extends JLayeredPane
                 index = cards.size() - 1;
             else  // card below top card selected
                 index = y / OFFSET_PIXELS;
+            
+            System.out.println(cards.get(index).getNumber().getName());
             
             if (isValidCard(index))
                 return cards.get(index);
@@ -344,7 +348,7 @@ public class CardStack extends JLayeredPane
      */
     protected final boolean isOneLess(Card cardOne, Card cardTwo)
     {
-        return cardOne.getNumber() + 1 == cardTwo.getNumber();
+        return cardOne.getNumber().getValue() + 1 == cardTwo.getNumber().getValue();
     }
     
     /**
@@ -379,7 +383,7 @@ public class CardStack extends JLayeredPane
         
         for (int i = index; i < cards.size() - 1; i++)
             if (!isDifferentColor(cards.get(i), cards.get(i + 1)) ||
-                !isOneLess(cards.get(i), cards.get(i + 1)))
+                !isOneLess(cards.get(i + 1), cards.get(i)))
                 return false;
 
         return true;
@@ -399,7 +403,7 @@ public class CardStack extends JLayeredPane
         final double OTHER_CARDS_HEIGHT = OFFSET_PIXELS * (cards.size() - 1);
         final double CARD_STACK_HEIGHT  = TOP_CARD_HEIGHT + OTHER_CARDS_HEIGHT;
         
-        if (!isEmpty() && p.getY() > CARD_STACK_HEIGHT)
+        if (!isEmpty() && (int) p.getY() > CARD_STACK_HEIGHT)
             return false;
         else
             return true;

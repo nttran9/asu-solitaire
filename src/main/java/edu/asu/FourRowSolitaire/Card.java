@@ -23,319 +23,274 @@ import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
 import java.net.URL;
+
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 
 /**
- * Class: Card
- *
- * Description: The Card class holds information pertaining to 1 out of the 52 cards per deck.
- *
+ * This class represents a single card in a standard deck of playing cards.
+ * 
  * @author Matt Stephen
  */
-public class Card extends JComponent
+@SuppressWarnings("serial")
+public class Card extends JComponent implements Cloneable
 {
-    public static final String SPADES_SUIT = "Spades";
-    public static final String CLUBS_SUIT = "Clubs";
-    public static final String HEARTS_SUIT = "Hearts";
-    public static final String DIAMONDS_SUIT = "Diamonds";
-    public static final String INVALID_SUIT = "Invalid Suit";
-
-    public static final int ACE = 1;
-    public static final int TWO = 2;
-    public static final int THREE = 3;
-    public static final int FOUR = 4;
-    public static final int FIVE = 5;
-    public static final int SIX = 6;
-    public static final int SEVEN = 7;
-    public static final int EIGHT = 8;
-    public static final int NINE = 9;
-    public static final int TEN = 10;
-    public static final int JACK = 11;
-    public static final int QUEEN = 12;
-    public static final int KING = 13;
-    public static final int INVALID_NUMBER = -1;
-
-    private String cardSuit;
-    private int cardNumber;
-    private int fullCardNumber; // 1 - 52
-    private int cardColor; //0 = black, red = 1
-
+    /*
+     * Each card in a deck is given a distinct ordinal number from 1-52.
+     */
+    private int fullCardNumber;
+    
+    private CardSuit   cardSuit;
+    private CardNumber cardNumber;
+    private CardColor  cardColor;
+    
     private int deckNumber;
-
-    private BufferedImage image; //Takes either card back or front
-
-    private String cardBack; //The back design
-    private String cardImageString; //The card front
-    private String cardHighlighted; //The highlighted card front
-
+    
+    /*
+     * BufferedImage representation of the card that is rendered to the output
+     * monitor. {@code cardBack}, {@code cardFront}, and {@code cardHighlighted}
+     * are String representations of the URL pointing to the image resources.
+     */
+    private BufferedImage image;
+    private String cardBack;
+    private String cardFront;
+    private String cardHighlighted;
+    
     private boolean faceUp = false;
     private boolean highlighted = false;
-
-    private String location = ""; //To notify the discard pile of moves from the deck
-
-    public Card(String suit, int number, int deckNumber, int fullNumber)
+    
+    /*
+     * Used to verify whether cards are being moved from the deck to the Discard
+     * Pile or not.
+     */
+    private String location = "";
+    
+    /**
+     * Constructs a new Card.
+     * 
+     * @param suit the card suit
+     * @param number the card number (a value between 1 and 13, where 1, 11, 
+     * 12, 13 represent an Ace, Jack, Queen, and King respectively)
+     * @param deckNumber number of the deck that this card belongs to
+     * @param fullNumber card ordinal (a distinct value between 1 and 52)
+     */
+    public Card(CardSuit suit, CardNumber number, int deckNumber, int fullNumber)
     {
-        if(isValidSuit(suit) && (number >= 1 && number <= 13))
+        if (isValidSuit(suit) && isValidNumber(number))
         {
-            cardSuit = suit;
-            cardNumber = number;
-            fullCardNumber = fullNumber;
+            this.cardSuit = suit;
+            this.cardNumber = number;
             this.deckNumber = deckNumber;
-
-            if(deckNumber >= 1 && deckNumber <= ChangeAppearance.NUM_DECKS)
-            {
-                cardBack = "images/cardbacks/cardback" + deckNumber + ".png";
-            }
-            else
-            {
-                cardBack = "images/cardbacks/cardback3.png";
-            }
-
-            initializeCardImageString();
+            this.fullCardNumber = fullNumber;
+            cardColor = cardSuit.getColor();
+            
+            // set card back style
+            Integer cardStyle = 3;
+            
+            if (ChangeAppearance.isValidDeckNumber(deckNumber))
+                cardStyle = deckNumber;
+            
+            // initialize image path locations
+            cardBack        = "images/cardbacks/cardback" + cardStyle + ".png";
+            cardFront       = "images/cardfaces/"         + cardSuit.getPrefix() + cardNumber.getName() + ".png";
+            cardHighlighted = "images/highlightedfaces/"  + cardSuit.getPrefix() + cardNumber.getName() + "H.png";
         }
         else
         {
-            cardSuit = INVALID_SUIT;
-            cardNumber = INVALID_NUMBER;
-
-            cardImageString = "images/invalidcard.png";
+            cardSuit = CardSuit.INVALID;
+            cardNumber = CardNumber.INVALID;
+            cardFront = "images/invalidcard.png";
         }
-
+        
         setFaceUp();
     }
-
+    
+    /**
+     * Highlights this card.
+     */
     public void highlight()
     {
-        highlighted = true;
-
         try
         {
             URL imageURL = this.getClass().getClassLoader().getResource(cardHighlighted);
-
-            if (imageURL != null)
-            {
-                image = ImageIO.read(imageURL);
-            }
+            if (imageURL != null) image = ImageIO.read(imageURL);
         }
         catch(IOException ex)
         {
             System.err.println("Error in creating highlighted card face image.");
         }
-
+        
+        highlighted = true;
         repaint();
     }
-
+    
+    /**
+     * Un-highlights this card.
+     */
     public void unhighlight()
     {
         highlighted = false;
-
         setFaceUp();
     }
-
+    
+    /**
+     * Tests whether this card is highlighted or not.
+     * 
+     * @return true if this card is highlighted; false otherwise
+     */
     public boolean isHighlighted()
     {
         return highlighted;
     }
-
+    
+    /**
+     * Set this card face up, showing the card's front.
+     */
     public void setFaceUp()
     {
         faceUp = true;
-
+        
         try
         {
-            URL imageURL = this.getClass().getClassLoader().getResource(cardImageString);
-            
-            if (imageURL != null)
-            {
-                image = ImageIO.read(imageURL);
-            }
+            URL imageURL = this.getClass().getClassLoader().getResource(cardFront);
+            if (imageURL != null) image = ImageIO.read(imageURL);
         }
         catch(IOException ex)
         {
             System.err.println("Error in creating card face image.");
         }
     }
-
+    
+    /**
+     * Sets this card face down, showing the card's back.
+     */
     public void setFaceDown()
     {
         faceUp = false;
-
+        
         try
         {
             URL imageURL = this.getClass().getClassLoader().getResource(cardBack);
-
-            if (imageURL != null)
-            {
-                image = ImageIO.read(imageURL);
-            }
+            if (imageURL != null) image = ImageIO.read(imageURL);
         }
         catch(IOException ex)
         {
             System.err.println("Error in creating card back image.");
         }
     }
-
+    
+    /**
+     * Tests whether this card is face up or not.
+     * 
+     * @return true if this card is face up; false otherwise
+     */
     public boolean isFaceUp()
     {
         return faceUp;
     }
-
-    public boolean isValidSuit(String suit)
+    
+    /**
+     * Tests if a CardSuit is a valid card suit.
+     * 
+     * @param suit CardSuit to test
+     * @return true if the CardSuit is a valid suit; false otherwise
+     */
+    public static boolean isValidSuit(CardSuit suit)
     {
-        if(suit.equals(SPADES_SUIT) || suit.equals(DIAMONDS_SUIT) ||
-                suit.equals(HEARTS_SUIT) || suit.equals(CLUBS_SUIT))
-        {
-            return true;
-        }
-
-        return false;
+        return (suit != CardSuit.INVALID) ? true : false;
     }
-
-    private void initializeCardImageString()
+    
+    /**
+     * Tests if a CardNumber is a valid card number.
+     * 
+     * @param number CardNumber to test
+     * @return true if the CardNumber is a valid number; false otherwise
+     */
+    public static boolean isValidNumber(CardNumber number)
     {
-        cardImageString = "images/cardfaces/";
-        cardHighlighted = "images/highlightedfaces/";
-
-        if(cardSuit.equals(SPADES_SUIT))
-        {
-            cardImageString += "s";
-            cardHighlighted += "s";
-            cardColor = 0;
-        }
-        else if(cardSuit.equals(CLUBS_SUIT))
-        {
-            cardImageString += "c";
-            cardHighlighted += "c";
-            cardColor = 0;
-        }
-        else if(cardSuit.equals(DIAMONDS_SUIT))
-        {
-            cardImageString += "d";
-            cardHighlighted += "d";
-            cardColor = 1;
-        }
-        else //if(cardSuit.equals(HEARTS_SUIT))
-        {
-            cardImageString += "h";
-            cardHighlighted += "h";
-            cardColor = 1;
-        }
-
-        if(cardNumber == ACE)
-        {
-            cardImageString += "Ace";
-            cardHighlighted += "Ace";
-        }
-        else if(cardNumber == TWO)
-        {
-            cardImageString += "Two";
-            cardHighlighted += "Two";
-        }
-        else if(cardNumber == THREE)
-        {
-            cardImageString += "Three";
-            cardHighlighted += "Three";
-        }
-        else if(cardNumber == FOUR)
-        {
-            cardImageString += "Four";
-            cardHighlighted += "Four";
-        }
-        else if(cardNumber == FIVE)
-        {
-            cardImageString += "Five";
-            cardHighlighted += "Five";
-        }
-        else if(cardNumber == SIX)
-        {
-            cardImageString += "Six";
-            cardHighlighted += "Six";
-        }
-        else if(cardNumber == SEVEN)
-        {
-            cardImageString += "Seven";
-            cardHighlighted += "Seven";
-        }
-        else if(cardNumber == EIGHT)
-        {
-            cardImageString += "Eight";
-            cardHighlighted += "Eight";
-        }
-        else if(cardNumber == NINE)
-        {
-            cardImageString += "Nine";
-            cardHighlighted += "Nine";
-        }
-        else if(cardNumber == TEN)
-        {
-            cardImageString += "Ten";
-            cardHighlighted += "Ten";
-        }
-        else if(cardNumber == JACK)
-        {
-            cardImageString += "Jack";
-            cardHighlighted += "Jack";
-        }
-        else if(cardNumber == QUEEN)
-        {
-            cardImageString += "Queen";
-            cardHighlighted += "Queen";
-        }
-        else //if(cardNumber == KING)
-        {
-            cardImageString += "King";
-            cardHighlighted += "King";
-        }
-
-        cardImageString += ".png";
-        cardHighlighted += "H.png";
+        return (number != CardNumber.INVALID) ? true : false;
     }
-
+    
+    /**
+     * Returns BufferedImage object graphically representing this card.
+     * 
+     * @return BufferedImage object
+     */
     public BufferedImage getImage()
     {
         return image;
     }
-
-    public int getNumber()
+    
+    /**
+     * Returns this card's number.
+     * 
+     * @return this card's number
+     */
+    public CardNumber getNumber()
     {
         return cardNumber;
     }
-
-    public String getSuit()
+    
+    /**
+     * Returns this card's suit.
+     * 
+     * @return this card's suit
+     */
+    public CardSuit getSuit()
     {
         return cardSuit;
     }
-
-    public int getColor()
+    
+    /**
+     * Returns this card's color.
+     * 
+     * @return this card's color
+     */
+    public CardColor getColor()
     {
         return cardColor;
     }
-
+    
+    /**
+     * Returns this card's full number (ordinal from 1-52).
+     * 
+     * @return this card's full number
+     */
     public int getFullNumber()
     {
         return fullCardNumber;
     }
-
+    
+    /**
+     * Returns the source of this card.
+     * 
+     * @return the source of this card
+     */
     public String getSource()
     {
         return location;
     }
-
+    
+    /**
+     * Set the source of this card.
+     * 
+     * @param source the source of this card
+     */
     public void setSource(String source)
     {
         location = source;
     }
-
+    
+    @Override
     protected void paintComponent(Graphics g)
     {
         super.paintComponent(g);
         g.drawImage(image, 0, 0, null);
     }
-
+    
+    @Override
     public Card clone()
     {
-        Card card = new Card(cardSuit, cardNumber, deckNumber, fullCardNumber);
-        return card;
+        return new Card(cardSuit, cardNumber, deckNumber, fullCardNumber);
     }
 }
