@@ -240,7 +240,7 @@ public class SolitaireBoard extends JFrame
 
     private void dealOutCustomBoard(LinkedList<Integer> numbers)
     {
-        LinkedList<Card> cards = deck.getDeck(numbers);
+        LinkedList<Card> cards = deck.createCustomDeck(numbers);
 
         int pileNumber = 0;
         int cardNumber = -1;

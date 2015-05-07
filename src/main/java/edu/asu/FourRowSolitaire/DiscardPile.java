@@ -296,11 +296,11 @@ public class DiscardPile extends CardStack
                     Image image = getCardAtLocation(i).getImage();
                     g.drawImage(image, 0, 0, null);
                 }
-
+                
                 for (int i = length() - cardsLeftFromDraw + 1; i < length(); i++)
                 {
                     Image image = getCardAtLocation(i).getImage();
-
+                    
                     if ((cardsLeftFromDraw == 3 && i == length() - 2) || (cardsLeftFromDraw == 2 && i == length() - 1))
                         g.drawImage(image, OFFSET_PIXELS, 0, null);
                     else if (cardsLeftFromDraw == 3 && i == length() - 1)

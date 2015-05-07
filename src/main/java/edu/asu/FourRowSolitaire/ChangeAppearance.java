@@ -19,64 +19,90 @@
 
 package edu.asu.FourRowSolitaire;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import javax.swing.*;
+import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 
 /**
- * Class: ChangeAppearance
- * 
- * Description: The ChangeAppearance class manages the ability to change the background or card backs.
+ * The ChangeAppearance class manages the ability to change the background or 
+ * card backs.
  * 
  * @author Matt Stephen
  */
+@SuppressWarnings("serial")
 public class ChangeAppearance extends JDialog implements ActionListener
 {
     public static final int NUM_DECKS = 3;
     public static final int NUM_BACKGROUNDS = 3;
-
+    
     public static final int FRS_DECK = 3;
     public static final int FRS_BACKGROUND = 2;
-
-    private JRadioButton[] decks = new JRadioButton[NUM_DECKS];
-
-    private JRadioButton[] backgrounds = new JRadioButton[NUM_BACKGROUNDS];
-
-    private JButton ok = new JButton("Choose This Setup");
-
-    public int deckNumber = 3;
-    public int backgroundNumber = 2;
-
-    private boolean exited = true;
-
-    //To hold the image previews
-    private JLabel cardBackLabel = new JLabel();
-    private JLabel backgroundLabel = new JLabel();
     
+    private JRadioButton[] decks;
+    private JRadioButton[] backgrounds;
+    
+    private JButton ok;
+    
+    public int deckNumber;
+    public int backgroundNumber;
+    
+    private boolean exited;
+    
+    /*
+     * Hold image previews.
+     */
+    private JLabel cardBackLabel;
+    private JLabel backgroundLabel;
+    
+    /**
+     * Constructs a new ChangeAppearance frame.
+     * 
+     * @param parent the parent JFrame containing this modal
+     * @param deckNumber card back style number
+     * @param backgroundNumber background style number
+     */
     public ChangeAppearance(JFrame parent, int deckNumber, int backgroundNumber)
     {
+        this.deckNumber       = deckNumber;
+        this.backgroundNumber = backgroundNumber;
+        
+        backgrounds = new JRadioButton[NUM_BACKGROUNDS];
+        decks       = new JRadioButton[NUM_DECKS];
+        ok          = new JButton("Choose This Setup");
+        
+        cardBackLabel   = new JLabel();
+        backgroundLabel = new JLabel();
+        
         setTitle("Change Appearance");
-        setSize(400,300);
         setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
         setModalityType(JDialog.ModalityType.APPLICATION_MODAL);
         setLocationRelativeTo(parent);
-
-        this.deckNumber = deckNumber;
-        this.backgroundNumber = backgroundNumber;
+        setSize(400, 300);
+        
         setup();
-
+        
         setVisible(true);
+        exited = true;
     }
-
+    
     private void setup()
     {
-        //Card backs
+        // card backs
         JPanel cardBackPanel = new JPanel();
         cardBackPanel.setLayout(new FlowLayout());
-
         ButtonGroup cardBacks = new ButtonGroup();
-
+        
         for(int i = 0; i < NUM_DECKS; i++)
         {
             decks[i] = new JRadioButton("Deck " + (i + 1));
@@ -84,22 +110,17 @@ public class ChangeAppearance extends JDialog implements ActionListener
             cardBackPanel.add(decks[i]);
             decks[i].addActionListener(this);
         }
-
-        if(deckNumber <= decks.length)
-        {
+        
+        if (deckNumber <= decks.length)
             decks[deckNumber - 1].setSelected(true);
-        }
         else
-        {
             decks[2].setSelected(true);
-        }
-
-        //Backgrounds
+        
+        // backgrounds
         JPanel backgroundPanel = new JPanel();
         backgroundPanel.setLayout(new FlowLayout());
-
         ButtonGroup backgroundsBG = new ButtonGroup();
-
+        
         for(int i = 0; i < NUM_BACKGROUNDS; i++)
         {
             backgrounds[i] = new JRadioButton("Background " + (i + 1));
@@ -107,7 +128,7 @@ public class ChangeAppearance extends JDialog implements ActionListener
             backgroundPanel.add(backgrounds[i]);
             backgrounds[i].addActionListener(this);
         }
-
+        
         if(backgroundNumber <= NUM_BACKGROUNDS)
         {
             backgrounds[backgroundNumber - 1].setSelected(true);
@@ -116,44 +137,44 @@ public class ChangeAppearance extends JDialog implements ActionListener
         {
             backgrounds[0].setSelected(true);
         }
-
+        
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
         buttonPanel.add(ok);
-
+        
         cardBackLabel.setIcon(new ImageIcon(this.getClass().getClassLoader().getResource
                 ("images/cardbacks/cardback" + deckNumber + ".png")));
         JPanel cardBackViewer = new JPanel();
         cardBackViewer.add(cardBackLabel);
-
+        
         backgroundLabel.setIcon(new ImageIcon(this.getClass().getClassLoader().getResource
                 ("images/backgrounds/background" + backgroundNumber + "small.jpg")));
         JPanel backgroundViewer = new JPanel();
         backgroundViewer.add(backgroundLabel);
-
+        
         JPanel p2 = new JPanel();
         p2.setLayout(new GridLayout(2, 2, 0, 0));
         p2.add(cardBackPanel);
         p2.add(backgroundPanel);
         p2.add(cardBackViewer);
         p2.add(backgroundViewer);
-
+        
         //Put everything together
         JPanel p1 = new JPanel();
         p1.setLayout(new BorderLayout());
-
+        
         JLabel note = new JLabel("Note: Deck changes will take effect on new game");
         note.setHorizontalAlignment(JLabel.CENTER);
-
+        
         p1.add(note, BorderLayout.NORTH);
         p1.add(p2, BorderLayout.CENTER);
         p1.add(buttonPanel, BorderLayout.SOUTH);
-
+        
         add(p1);
-
+        
         ok.addActionListener(this);
     }
-
+    
     public static boolean isValidDeckNumber(int n)
     {
         return (n >= 1 && n <= NUM_DECKS) ? true : false;
@@ -161,22 +182,12 @@ public class ChangeAppearance extends JDialog implements ActionListener
     
     public int getDeckNumber()
     {
-        if(!exited)
-        {
-            return deckNumber;
-        }
-
-        return -1;
+        return (!exited) ? deckNumber : -1;
     }
 
     public int getBackgroundNumber()
     {
-        if(!exited)
-        {
-            return backgroundNumber;
-        }
-
-        return -1;
+        return (!exited) ? backgroundNumber : -1;
     }
 
     public void actionPerformed(ActionEvent e)

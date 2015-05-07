@@ -19,106 +19,121 @@
 
 package edu.asu.FourRowSolitaire;
 
+import java.util.Collections;
 import java.util.LinkedList;
-import java.util.Random;
 
 /**
- * This class represents a standard deck of playing cards. Every deck contains
- * 52 cards.
+ * This class represents a deck of {@link Card} objects.
  *
  * @author Matt Stephen
  */
 public class Deck
 {
-    private int deckNumber;
-    private LinkedList<Card> deck = new LinkedList<Card>();
+    /*
+     * The {@link Card}s in the deck are internally stored as a linked list.
+     */
+    private LinkedList<Card> cards;
+    
+    /*
+     * Denotes which graphical image to be displayed when a card is face down.
+     * This integer value is used to determine the filename of the image file.
+     */
+    private int deckStyle;
     
     /**
      * Constructs a new deck.
      * 
-     * @param deckNumber number assigned to this deck
+     * @param cards linked list of {@link Card}s that will make up the deck
      */
-    public Deck(int deckNumber)
+    public Deck(int deckStyle)
     {
-        this.deckNumber = deckNumber;
-        shuffle();
+        this.deckStyle = deckStyle;
+        
+        createStandardDeck();
+        Collections.shuffle(cards);
     }
     
     /**
-     * Returns a list of cards contained in this deck
-     * 
-     * @return a LinkedList containing all of the cards in this deck
+     * Create a list of 52 playing cards resembling a standard deck.
      */
-    public LinkedList<Card> getDeck()
+    public void createStandardDeck()
     {
-        return deck;
-    }
-    
-    /**
-     * Converts a list of full card numbers to a list of cards. Returns the 
-     * list of cards.
-     * 
-     * @param numbers a LinkedList of full card numbers representing a custom
-     * deck
-     * @return a LinkedList containing all of the cards in the deck
-     */
-    public LinkedList<Card> getDeck(LinkedList<Integer> numbers)
-    {
-        deck = new LinkedList<Card>();
+        cards = new LinkedList<Card>();
         
-        for (int i = 0; i < numbers.size(); i++)
-            if (numbers.get(i) > 0)
-                createCard(numbers.get(i));
-        
-        return deck;
-    }
-    
-    /**
-     * Shuffle the deck.
-     */
-    public void shuffle()
-    {
-        LinkedList<Integer> numberList = new LinkedList<Integer>();
-        
-        for (int i = 1; i <= 52; i++)
-            numberList.add(i);
-        
-        Random gen = new Random();
-        
-        for (int i = 0; i < 52; i++)
+        for (CardSuit suit : CardSuit.values())
         {
-            int num = gen.nextInt(numberList.size());
-            int cardNumber = numberList.get(num);
-            numberList.remove(num);
-            
-            createCard(cardNumber);
+            for (CardNumber value : CardNumber.values())
+            {
+                if (Card.isValidSuit(suit) && Card.isValidNumber(value))
+                {
+                    int fullNumber = suit.getOffset() + value.getValue();
+                    cards.add(new Card(suit, value, deckStyle, fullNumber));
+                }
+            }
         }
     }
     
     /**
-     * Creates a new card.
+     * This method accepts a linked list of Integer objects -- each of them 
+     * representing a {@link Card} ordinal number -- and converts the linked 
+     * list into another linked list of corresponding Card objects.
      * 
-     * @param fullCardNumber
+     * @param numbers linked list of integers representing the cards
+     * @return corresponding linked list of {@link Card}s
      */
-    private void createCard(int fullCardNumber)
+    public LinkedList<Card> createCustomDeck(LinkedList<Integer> ordinals)
     {
-        CardSuit cardSuit = CardSuit.INVALID;
+        cards = new LinkedList<Card>();
+        
+        for (int i = 0; i < ordinals.size(); i++)
+            if (ordinals.get(i) > 0)
+                createCard(ordinals.get(i));
+        
+        return cards;
+    }
+    
+    /**
+     * Creates a new card from a card's ordinal number.
+     * 
+     * @param fullCardNumber ordinal number of the card to create
+     */
+    private Card createCard(int fullCardNumber)
+    {
+        // initially assume card is invalid
+        CardSuit   cardSuit = CardSuit.INVALID;
         CardNumber cardNumber = CardNumber.INVALID;
         
-        // get card suit
         for (CardSuit suit : CardSuit.values())
-            if (fullCardNumber - suit.getOffset() >= 1 && fullCardNumber - suit.getOffset() <= 13)
+        {
+            int value = fullCardNumber - suit.getOffset();
+            if (value >= 1 && value <= 13)
                 cardSuit = suit;
+        }
         
-        // get card value
         for (CardNumber number : CardNumber.values())
             if ((fullCardNumber - 1) % 13 + 1 == number.getValue())
                 cardNumber = number;
         
-        // add the card to the deck
-        if (fullCardNumber >= 1 && fullCardNumber <= 52 && Card.isValidSuit(cardSuit))
-            deck.add(new Card(cardSuit, cardNumber, deckNumber, fullCardNumber));
-        else
-            deck.add(new Card(CardSuit.INVALID, CardNumber.INVALID, deckNumber, fullCardNumber));
+        return new Card(cardSuit, cardNumber, deckStyle, fullCardNumber);
+    }
+    
+    /**
+     * Returns a linked list of cards contained in this deck.
+     * 
+     * @return a linked list containing all of the cards in this deck
+     */
+    public LinkedList<Card> getDeck()
+    {
+        return cards;
+    }
+    
+    /**
+     * Sets the cards in this deck.
+     * 
+     * @param cards a linked list containing all of the cards to set
+     */
+    public void setDeck(LinkedList<Card> cards)
+    {
+        this.cards = cards;
     }
 }

@@ -19,9 +19,9 @@
 
 package edu.asu.FourRowSolitaire;
 
-import java.awt.*;
-import java.awt.image.*;
-import java.io.*;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.net.URL;
 
 import javax.imageio.ImageIO;
@@ -40,66 +40,72 @@ public class Card extends JComponent implements Cloneable
      */
     private int fullCardNumber;
     
+    /*
+     * The face value and suit of the card.
+     */
     private CardSuit   cardSuit;
     private CardNumber cardNumber;
-    private CardColor  cardColor;
     
-    private int deckNumber;
+    /*
+     * Denotes which graphical image to be displayed when the card is face down.
+     * This integer value is used to determine the filename of the image file.
+     * Defaults to style #3.
+     */
+    private int cardBackStyle = 3;
     
     /*
      * BufferedImage representation of the card that is rendered to the output
      * monitor. {@code cardBack}, {@code cardFront}, and {@code cardHighlighted}
-     * are String representations of the URL pointing to the image resources.
+     * are String representations of the file path to the image resources.
      */
     private BufferedImage image;
     private String cardBack;
     private String cardFront;
     private String cardHighlighted;
     
+    /*
+     * Card states.
+     */
     private boolean faceUp = false;
     private boolean highlighted = false;
     
     /*
-     * Used to verify whether cards are being moved from the deck to the Discard
-     * Pile or not.
+     * Used to determine whether cards are being moved from the deck to the 
+     * Discard Pile.
      */
     private String location = "";
     
     /**
      * Constructs a new Card.
      * 
-     * @param suit the card suit
-     * @param number the card number (a value between 1 and 13, where 1, 11, 
-     * 12, 13 represent an Ace, Jack, Queen, and King respectively)
-     * @param deckNumber number of the deck that this card belongs to
-     * @param fullNumber card ordinal (a distinct value between 1 and 52)
+     * @param suit          the suit of the card
+     * @param number        the face value of the card
+     * @param cardBackStyle integer denoting the image that is to be displayed 
+     *                      when a card is face down
+     * @param fullNumber    an ordinal number between 1 and 52
      */
-    public Card(CardSuit suit, CardNumber number, int deckNumber, int fullNumber)
+    public Card(CardSuit suit, CardNumber number, int cardBackStyle, int fullNumber)
     {
         if (isValidSuit(suit) && isValidNumber(number))
         {
             this.cardSuit = suit;
             this.cardNumber = number;
-            this.deckNumber = deckNumber;
             this.fullCardNumber = fullNumber;
-            cardColor = cardSuit.getColor();
             
-            // set card back style
-            Integer cardStyle = 3;
-            
-            if (ChangeAppearance.isValidDeckNumber(deckNumber))
-                cardStyle = deckNumber;
+            // set image displayed when card is face down
+            if (ChangeAppearance.isValidDeckNumber(cardBackStyle))
+                this.cardBackStyle = cardBackStyle;
             
             // initialize image path locations
-            cardBack        = "images/cardbacks/cardback" + cardStyle + ".png";
+            cardBack        = "images/cardbacks/cardback" + cardBackStyle + ".png";
             cardFront       = "images/cardfaces/"         + cardSuit.getPrefix() + cardNumber.getName() + ".png";
             cardHighlighted = "images/highlightedfaces/"  + cardSuit.getPrefix() + cardNumber.getName() + "H.png";
         }
         else
         {
-            cardSuit = CardSuit.INVALID;
+            cardSuit   = CardSuit.INVALID;
             cardNumber = CardNumber.INVALID;
-            cardFront = "images/invalidcard.png";
+            cardFront  = "images/invalidcard.png";
         }
         
         setFaceUp();
@@ -117,7 +123,7 @@ public class Card extends JComponent implements Cloneable
         }
         catch (IOException ex)
         {
-            System.err.println("Error in creating highlighted card face image.");
+            System.err.println("Error occurred when creating highlighted card face image.");
         }
         
         highlighted = true;
@@ -134,7 +140,7 @@ public class Card extends JComponent implements Cloneable
     }
     
     /**
-     * Tests whether this card is highlighted or not.
+     * Determines whether this card is highlighted or not.
      * 
      * @return true if this card is highlighted; false otherwise
      */
@@ -157,7 +163,7 @@ public class Card extends JComponent implements Cloneable
         }
         catch(IOException ex)
         {
-            System.err.println("Error in creating card face image.");
+            System.err.println("Error occurred when creating card face image.");
         }
     }
     
@@ -175,7 +181,7 @@ public class Card extends JComponent implements Cloneable
         }
         catch (IOException ex)
         {
-            System.err.println("Error in creating card back image.");
+            System.err.println("Error occurred when creating card back image.");
         }
     }
     
@@ -248,7 +254,7 @@ public class Card extends JComponent implements Cloneable
      */
     public CardColor getColor()
     {
-        return cardColor;
+        return cardSuit.getColor();
     }
     
     /**
@@ -291,6 +297,6 @@ public class Card extends JComponent implements Cloneable
     @Override
     public Card clone()
     {
-        return new Card(cardSuit, cardNumber, deckNumber, fullCardNumber);
+        return new Card(cardSuit, cardNumber, cardBackStyle, fullCardNumber);
     }
 }
