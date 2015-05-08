@@ -17,7 +17,7 @@
  * along with FourRowSolitaire.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.asu.FourRowSolitaire;
+package FourRowSolitaire;
 
 import java.awt.Desktop;
 import java.awt.event.*;
@@ -25,7 +25,6 @@ import java.io.*;
 import java.net.URI;
 import java.net.URL;
 import java.util.LinkedList;
-
 import javax.swing.*;
 
 /**
@@ -277,19 +276,7 @@ public class FourRowSolitaire extends SolitaireBoard implements ActionListener
     {
         if(e.getSource() == newGame)
         {
-            int check = JOptionPane.showConfirmDialog(this, "Quitting the current game will result in a loss.\n" +
-                    "Do you wish to continue?", "Continue?", JOptionPane.PLAIN_MESSAGE);
-
-            if(check == JOptionPane.YES_OPTION)
-            {
-                super.newGame(0);
-                recordGame(GAME_LOST);
-            }
-            else
-            {
-                //If player wants to continue game
-                return;
-            }
+            super.newGame(0);
         }
         else if(e.getSource() == undo)
         {
@@ -526,19 +513,16 @@ public class FourRowSolitaire extends SolitaireBoard implements ActionListener
 
         else if(e.getSource() == help)
         {
-            JOptionPane.showMessageDialog(this, "This game is a mixture of FreeCell and normal (Klondike) Solitaire.\n" +
-                    "\nSimilarities to FreeCell:\n" +
-                    "   -The Cards in the columns are always visible\n" +
-                    "   -There are four individual cells at the top\n" +
-                    "\nSimilarities to Solitaire:\n" +
-                    "   -There is a deck and discard pile to draw cards from\n" +
-                    "   -Only Kings may be placed at the top of an empty column\n" +
-                    "   -Cards may be removed from the Ace piles and placed back onto the playing field\n" +
-                    "   -Any number of cards can be moved in one move (as long as they are stacked as in Solitaire\n" +
-                    "\nFeatures unique to this game:\n" +
-                    "   -The four individual cells start with cards in them\n" +
-                    "   -You may only go through the deck twice on draw one and three times on draw three\n" +
-                    "   -The obvious: there are only four columns, not 7 or 8 as in Solitaire and FreeCell, respectively",
+            JOptionPane.showMessageDialog(this, "About Four Row Solitaire:\n\n Four Row Solitaire is a game that combines"
+            		+ " FreeCell and Four Row Solitaire.\nThe board contains four empty cells, with columns respectively "
+            		+ "right under them.\nThere are also four other cells on the right that are organized by suit and must "
+            		+ "be stacked in ascending order.\nOnce, all cards have been stacked, the game is won.\n\nObjective:\n"
+            		+ "To stack all cards according to their suit in ascending order.\n\nValid Moves:\n-Card can be stacked "
+            		+ "in descending order but they must be of alternating color.\n-If a column is empty, It can and must"
+            		+ " be filled by a King.\n-An ordered stack can also be moved, but the highest card in the stack must "
+            		+ "one less than the card it's stacking up against and it should be of opposite color.\n\nMisc.:\n-"
+            		+ "There is a deck on the bottom right that must be used, but viewing it is limited.\n-A timer can be "
+            		+ "used.",
                     "Help!", JOptionPane.INFORMATION_MESSAGE);
         }
         else if(e.getSource() == about)
