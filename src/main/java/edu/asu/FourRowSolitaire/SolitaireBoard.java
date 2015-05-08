@@ -17,12 +17,18 @@
  * along with FourRowSolitaire.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.asu.FourRowSolitaire;
+package FourRowSolitaire;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.net.URL;
 import java.util.LinkedList;
+import java.util.Random;
+
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.Sequence;
+import javax.sound.midi.Sequencer;
 import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
 
@@ -392,6 +398,14 @@ public class SolitaireBoard extends JFrame
 
     public void newGame(int winOrLoss)
     {
+    	int restart = JOptionPane.showConfirmDialog(this, "Are you sure you want to start a new"
+    			+ " game? Starting a new game would result in a loss.", "New Game?", 
+    			JOptionPane.WARNING_MESSAGE);
+    	
+    	if (restart == JOptionPane.OK_OPTION){
+    		recordGame(GAME_LOST);
+    	}
+    	
         //If the game was won, the win was already reported
         if(winOrLoss != GAME_WON && winOrLoss != DO_NOTHING)
         {
@@ -431,7 +445,7 @@ public class SolitaireBoard extends JFrame
         recordGame(DO_NOTHING);
     }
 
-    protected void recordGame(int winOrLoss)
+    private void recordGame(int winOrLoss)
     {
         int count = 0, temp = 0;
         int gamesPlayed1e = 0, gamesWon1e = 0, winStreak1e = 0, lossStreak1e = 0,
@@ -1481,12 +1495,19 @@ public class SolitaireBoard extends JFrame
                     return;
                 }
             }
-            
-            timer.stop();
-            
+
             if(winAnimationStatus != 0 || winSoundsStatus != 0)
             {
-                new WinScreen(winAnimationStatus, winSoundsStatus);
+            	new SoundThread().run();
+            	
+            	setSize (800,600);
+            	
+            	FireworksDisplay fw = new FireworksDisplay(100,200);
+            	add(fw);
+            	fw.restartDisplay();
+            	setLocationRelativeTo(null);
+            	
+                //new WinScreen(winAnimationStatus, winSoundsStatus);
             }
 
             int playAgain = JOptionPane.showConfirmDialog(SolitaireBoard.this, "Play Again?", "You Won!", JOptionPane.YES_NO_OPTION);
@@ -1494,7 +1515,6 @@ public class SolitaireBoard extends JFrame
             if(playAgain == JOptionPane.YES_OPTION)
             {
                 recordGame(GAME_WON);
-                
                 newGame(GAME_WON);
             }
             else//(playAgain == JOptionPane.NO_OPTION)
@@ -1830,6 +1850,72 @@ public class SolitaireBoard extends JFrame
             {
                 recordGame(SolitaireBoard.GAME_LOST);
                 System.exit(0);
+            }
+        }
+    }
+    
+    private class SoundThread extends Thread
+    {
+        public Sequencer sequencer;
+
+        public void run()
+        {
+            String song = ""; //To hold choice
+            Random gen = new Random();
+
+            try
+            {
+                //Doesn't work as a .jar
+                File songDir = new File(getClass().getClassLoader().getResource("sounds/win/").toURI());
+                String[] songs = songDir.list();
+                boolean retry = true;
+
+                do
+                {
+                    song = songs[gen.nextInt(songs.length)];
+
+                    if(song.toLowerCase().contains(".mid"))
+                    {
+                        retry = false;
+                    }
+                } while(retry);
+            }
+            catch(Exception ex)
+            {
+                int songInt = gen.nextInt(4);
+
+                if(songInt == 0)
+                {
+                    song = "celebration.mid";
+                }
+                else if(songInt == 1)
+                {
+                    song = "anotheronebitesthedust.mid";
+                }
+                else if(songInt == 2)
+                {
+                    song = "wearethechampions.mid";
+                }
+                else if(songInt == 3)
+                {
+                    song = "bluedabadee.mid";
+                }
+            }
+
+            URL filelocation = getClass().getClassLoader().getResource("sounds/win/" + song);
+
+            try
+            {
+                Sequence sequence = MidiSystem.getSequence(filelocation);
+                sequencer = MidiSystem.getSequencer();
+                sequencer.open();
+                sequencer.setSequence(sequence);
+                sequencer.setLoopCount(0);
+                sequencer.start();
+            }
+            catch(Exception ex)
+            {
+                System.err.println("Error opening win sound file.");
             }
         }
     }
