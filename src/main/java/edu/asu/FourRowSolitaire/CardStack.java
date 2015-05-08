@@ -178,8 +178,6 @@ public class CardStack extends JLayeredPane
      */
     public Card getCardAtLocation(Point p)
     {
-        System.out.println("getCardAtLocation()");
-        
         if (cards.isEmpty())
             return null;
         
@@ -193,8 +191,6 @@ public class CardStack extends JLayeredPane
                 index = cards.size() - 1;
             else  // card below top card selected
                 index = y / OFFSET_PIXELS;
-            
-            System.out.println(cards.get(index).getNumber().getName());
             
             if (isValidCard(index))
                 return cards.get(index);

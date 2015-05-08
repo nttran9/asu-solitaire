@@ -34,24 +34,6 @@ import java.awt.Point;
 public class SingleCell extends CardStack
 {
     /**
-     * Pushes a card to the top of this CardStack.
-     * 
-     * @param card the card to be pushed onto this CardStack
-     * @return the card that was pushed onto this CardStack
-     */
-    @Override
-    public Card push(Card card)
-    {
-        if (isEmpty())
-        {
-            super.push(card);
-            return card;
-        }
-        
-        return null;
-    }
-    
-    /**
      * Returns the topmost Card located at the specified coordinate point.
      * <p>
      * Because a SingleCell can only contain one card, there is not need 

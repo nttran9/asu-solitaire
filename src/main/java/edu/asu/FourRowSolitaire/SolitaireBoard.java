@@ -23,6 +23,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.LinkedList;
+
 import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
 
@@ -47,7 +48,7 @@ public class SolitaireBoard extends JFrame
     //be changed at next click of the deck (in the middle of the game)
     private int newDrawCount = drawCount;
 
-    private int backgroundNumber = 2;
+    private int backgroundNumber = 3;
     private int deckNumber = 3;
     private Deck deck = new Deck(deckNumber); //Create default-backed deck (auto shuffles)
 
@@ -72,7 +73,7 @@ public class SolitaireBoard extends JFrame
     private Timer timer = new Timer(1000, new TimerListener());
     private JPanel statusBar = new JPanel(new FlowLayout(FlowLayout.CENTER));
     private JLabel timerLabel = new JLabel("Time: OFF");
-    private int timerCount = 0;
+    protected int timerCount = 0;
     private int timerToRunNextGame = 0;
     private boolean timerToRun = false;
 
@@ -434,6 +435,8 @@ public class SolitaireBoard extends JFrame
     protected void recordGame(int winOrLoss)
     {
         int count = 0, temp = 0;
+        int bestTime1e = 0, bestTime1m = 0, bestTime1h = 0,
+            bestTime3e = 0, bestTime3m = 0, bestTime3h = 0;
         int gamesPlayed1e = 0, gamesWon1e = 0, winStreak1e = 0, lossStreak1e = 0,
             currentStreak1e = 0;
         int gamesPlayed1m = 0, gamesWon1m = 0, winStreak1m = 0, lossStreak1m = 0,
@@ -492,7 +495,7 @@ public class SolitaireBoard extends JFrame
             }
             else
             {
-                while((input.available() > 0) && count < 31)
+                while((input.available() > 0) && count < 37)
                 {
                     temp = input.readInt();
                     switch(count)
@@ -503,36 +506,42 @@ public class SolitaireBoard extends JFrame
                         case 3: winStreak1e = temp; break;
                         case 4: lossStreak1e = temp; break;
                         case 5: currentStreak1e = temp; break;
+                        case 6: bestTime1e = temp; break;
 
-                        case 6: gamesPlayed1m = temp; break;
-                        case 7: gamesWon1m = temp; break;
-                        case 8: winStreak1m = temp; break;
-                        case 9: lossStreak1m = temp; break;
-                        case 10: currentStreak1m = temp; break;
+                        case 7: gamesPlayed1m = temp; break;
+                        case 8: gamesWon1m = temp; break;
+                        case 9: winStreak1m = temp; break;
+                        case 10: lossStreak1m = temp; break;
+                        case 11: currentStreak1m = temp; break;
+                        case 12: bestTime1m = temp; break;
 
-                        case 11: gamesPlayed1h = temp; break;
-                        case 12: gamesWon1h = temp; break;
-                        case 13: winStreak1h = temp; break;
-                        case 14: lossStreak1h = temp; break;
-                        case 15: currentStreak1h = temp; break;
+                        case 13: gamesPlayed1h = temp; break;
+                        case 14: gamesWon1h = temp; break;
+                        case 15: winStreak1h = temp; break;
+                        case 16: lossStreak1h = temp; break;
+                        case 17: currentStreak1h = temp; break;
+                        case 18: bestTime1h = temp; break;
 
-                        case 16: gamesPlayed3e = temp; break;
-                        case 17: gamesWon3e = temp; break;
-                        case 18: winStreak3e = temp; break;
-                        case 19: lossStreak3e = temp; break;
-                        case 20: currentStreak3e = temp; break;
+                        case 19: gamesPlayed3e = temp; break;
+                        case 20: gamesWon3e = temp; break;
+                        case 21: winStreak3e = temp; break;
+                        case 22: lossStreak3e = temp; break;
+                        case 23: currentStreak3e = temp; break;
+                        case 24: bestTime3e = temp; break;
 
-                        case 21: gamesPlayed3m = temp; break;
-                        case 22: gamesWon3m = temp; break;
-                        case 23: winStreak3m = temp; break;
-                        case 24: lossStreak3m = temp; break;
-                        case 25: currentStreak3m = temp; break;
+                        case 25: gamesPlayed3m = temp; break;
+                        case 26: gamesWon3m = temp; break;
+                        case 27: winStreak3m = temp; break;
+                        case 28: lossStreak3m = temp; break;
+                        case 29: currentStreak3m = temp; break;
+                        case 30: bestTime3m = temp; break;
 
-                        case 26: gamesPlayed3h = temp; break;
-                        case 27: gamesWon3h = temp; break;
-                        case 28: winStreak3h = temp; break;
-                        case 29: lossStreak3h = temp; break;
-                        case 30: currentStreak3h = temp; break;
+                        case 31: gamesPlayed3h = temp; break;
+                        case 32: gamesWon3h = temp; break;
+                        case 33: winStreak3h = temp; break;
+                        case 34: lossStreak3h = temp; break;
+                        case 35: currentStreak3h = temp; break;
+                        case 36: bestTime3h = temp; break;
 
                         default: ; break;
                     }
@@ -574,6 +583,11 @@ public class SolitaireBoard extends JFrame
                         {
                             winStreak3e = currentStreak3e;
                         }
+                        
+                        if (timerCount < bestTime3e || bestTime3e == 0)
+                        {
+                            bestTime3e = timerCount;
+                        }
                     }
                     else if(difficulty == 2)
                     {
@@ -593,6 +607,11 @@ public class SolitaireBoard extends JFrame
                         {
                             winStreak3m = currentStreak3m;
                         }
+                        
+                        if (timerCount < bestTime3m || bestTime3m == 0)
+                        {
+                            bestTime3m = timerCount;
+                        }
                     }
                     else
                     {
@@ -611,6 +630,11 @@ public class SolitaireBoard extends JFrame
                         if(winStreak3h < currentStreak3h)
                         {
                             winStreak3h = currentStreak3h;
+                        }
+                        
+                        if (timerCount < bestTime3h || bestTime3h == 0)
+                        {
+                            bestTime3h = timerCount;
                         }
                     }
                 }
@@ -634,6 +658,11 @@ public class SolitaireBoard extends JFrame
                         {
                             winStreak1e = currentStreak1e;
                         }
+                        
+                        if (timerCount < bestTime1e || bestTime1e == 0)
+                        {
+                            bestTime1e = timerCount;
+                        }
                     }
                     else if(difficulty == 2)
                     {
@@ -652,6 +681,11 @@ public class SolitaireBoard extends JFrame
                         if(winStreak1m < currentStreak1m)
                         {
                             winStreak1m = currentStreak1m;
+                        }
+                        
+                        if (timerCount < bestTime1m || bestTime1m == 0)
+                        {
+                            bestTime1m = timerCount;
                         }
                     }
                     else
@@ -672,6 +706,11 @@ public class SolitaireBoard extends JFrame
                         {
                             winStreak1h = currentStreak1h;
                         }
+                        
+                        if (timerCount < bestTime1h || bestTime3h == 0)
+                        {
+                            bestTime1h = timerCount;
+                        }
                     }
                 }
             }
@@ -682,36 +721,42 @@ public class SolitaireBoard extends JFrame
                 currentStreak1e = 0;
                 winStreak1e = 0;
                 lossStreak1e = 0;
+                bestTime1e = 0;
 
                 gamesWon1m = 0;
                 gamesPlayed1m = 0;
                 currentStreak1m = 0;
                 winStreak1m = 0;
                 lossStreak1m = 0;
+                bestTime1m = 0;
 
                 gamesWon1h = 0;
                 gamesPlayed1h = 0;
                 currentStreak1h = 0;
                 winStreak1h = 0;
                 lossStreak1h = 0;
+                bestTime1h = 0;
 
                 gamesWon3e = 0;
                 gamesPlayed3e = 0;
                 currentStreak3e = 0;
                 winStreak3e = 0;
                 lossStreak3e = 0;
+                bestTime3e = 0;
 
                 gamesWon3m = 0;
                 gamesPlayed3m = 0;
                 currentStreak3m = 0;
                 winStreak3m = 0;
                 lossStreak3m = 0;
+                bestTime3m = 0;
 
                 gamesWon3h = 0;
                 gamesPlayed3h = 0;
                 currentStreak3h = 0;
                 winStreak3h = 0;
                 lossStreak3h = 0;
+                bestTime3h = 0;
             }
             else if(winOrLoss == DO_NOTHING || winOrLoss == GAME_SAVED)
             {
@@ -842,37 +887,43 @@ public class SolitaireBoard extends JFrame
             output.writeInt(winStreak1e);
             output.writeInt(lossStreak1e);
             output.writeInt(currentStreak1e);
+            output.writeInt(bestTime1e);
 
             output.writeInt(gamesPlayed1m);
             output.writeInt(gamesWon1m);
             output.writeInt(winStreak1m);
             output.writeInt(lossStreak1m);
             output.writeInt(currentStreak1m);
+            output.writeInt(bestTime1m);
 
             output.writeInt(gamesPlayed1h);
             output.writeInt(gamesWon1h);
             output.writeInt(winStreak1h);
             output.writeInt(lossStreak1h);
             output.writeInt(currentStreak1h);
+            output.writeInt(bestTime1h);
 
             output.writeInt(gamesPlayed3e);
             output.writeInt(gamesWon3e);
             output.writeInt(winStreak3e);
             output.writeInt(lossStreak3e);
             output.writeInt(currentStreak3e);
+            output.writeInt(bestTime3e);
 
             output.writeInt(gamesPlayed3m);
             output.writeInt(gamesWon3m);
             output.writeInt(winStreak3m);
             output.writeInt(lossStreak3m);
             output.writeInt(currentStreak3m);
+            output.writeInt(bestTime3m);
 
             output.writeInt(gamesPlayed3h);
             output.writeInt(gamesWon3h);
             output.writeInt(winStreak3h);
             output.writeInt(lossStreak3h);
             output.writeInt(currentStreak3h);
-
+            output.writeInt(bestTime3h);
+            
             output.writeInt(drawCount);
             output.writeInt(newDrawCount);
             output.writeInt(deckNumber);
@@ -1486,21 +1537,7 @@ public class SolitaireBoard extends JFrame
             
             if(winAnimationStatus != 0 || winSoundsStatus != 0)
             {
-                new WinScreen(winAnimationStatus, winSoundsStatus);
-            }
-
-            int playAgain = JOptionPane.showConfirmDialog(SolitaireBoard.this, "Play Again?", "You Won!", JOptionPane.YES_NO_OPTION);
-
-            if(playAgain == JOptionPane.YES_OPTION)
-            {
-                recordGame(GAME_WON);
-                
-                newGame(GAME_WON);
-            }
-            else//(playAgain == JOptionPane.NO_OPTION)
-            {
-                recordGame(GAME_WON);
-                System.exit(0);
+                new WinScreen(winAnimationStatus, winSoundsStatus, SolitaireBoard.this);
             }
         }
 
@@ -1697,8 +1734,6 @@ public class SolitaireBoard extends JFrame
 
                 numCardsInDiscardView.add(discardPile.getNumViewableCards());
                 clickedCard = source.getCardAtLocation(e.getPoint());
-                
-                System.out.println("HERE " + ((clickedCard != null) ? "true" : "false"));
                 
                 if(clickedCard != null)
                 {

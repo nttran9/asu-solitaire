@@ -89,7 +89,7 @@ public class Deck
         
         for (int i = 0; i < ordinals.size(); i++)
             if (ordinals.get(i) > 0)
-                createCard(ordinals.get(i));
+                cards.add(createCard(ordinals.get(i)));
         
         return cards;
     }

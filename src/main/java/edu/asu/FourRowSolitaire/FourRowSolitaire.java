@@ -160,22 +160,22 @@ public class FourRowSolitaire extends SolitaireBoard implements ActionListener
             else if(correctedStatistics == -1)
             {
                 //Statistics file is formatted to the new style of saving statistics
-                while((input.available() > 0) && count < 42)
+                while((input.available() > 0) && count < 49)
                 {
                     temp = input.readInt();
                     switch(count)
                     {
-                        case 31: drawCount = temp; break;
-                        case 32: newDrawCount = temp; break;
-                        case 33: deckNumber = temp; break;
-                        case 34: backgroundNumber = temp; break;
-                        case 35: timerStatus = temp; break;
-                        case 36: winAnimation = temp; break;
-                        case 37: winSounds = temp; break;
-                        case 38: deckThroughs = temp; break;
-                        case 39: difficulty = temp; break;
-                        case 40: newDifficulty = temp; break;
-                        case 41: saved = temp; break;
+                        case 37: drawCount = temp; break;
+                        case 38: newDrawCount = temp; break;
+                        case 39: deckNumber = temp; break;
+                        case 40: backgroundNumber = temp; break;
+                        case 41: timerStatus = temp; break;
+                        case 42: winAnimation = temp; break;
+                        case 43: winSounds = temp; break;
+                        case 44: deckThroughs = temp; break;
+                        case 45: difficulty = temp; break;
+                        case 46: newDifficulty = temp; break;
+                        case 47: saved = temp; break;
 
                         default: ; break;
                     }
@@ -240,7 +240,7 @@ public class FourRowSolitaire extends SolitaireBoard implements ActionListener
                 {
                     cards.add(input.readInt());
                 }
-
+                
                 if(cards.size() == 66)
                 {
                     super.createBoard(cards);
@@ -253,6 +253,7 @@ public class FourRowSolitaire extends SolitaireBoard implements ActionListener
             }
             catch(Exception ex)
             {
+                ex.printStackTrace();
                 System.err.println("Problem Loading Saved Game (Unknown Error)... Starting New Game");
                 super.createBoard(null);
             }
@@ -278,7 +279,7 @@ public class FourRowSolitaire extends SolitaireBoard implements ActionListener
         if(e.getSource() == newGame)
         {
             int check = JOptionPane.showConfirmDialog(this, "Quitting the current game will result in a loss.\n" +
-                    "Do you wish to continue?", "Continue?", JOptionPane.PLAIN_MESSAGE);
+                    "Do you wish to continue?", "Continue?", JOptionPane.OK_CANCEL_OPTION);
 
             if(check == JOptionPane.YES_OPTION)
             {
@@ -305,6 +306,8 @@ public class FourRowSolitaire extends SolitaireBoard implements ActionListener
                     "frs-statistics.dat";
 
             int count = 0, temp = 0;
+            int bestTime1e = 0, bestTime1m = 0, bestTime1h = 0,
+                bestTime3e = 0, bestTime3m = 0, bestTime3h = 0;
             int gamesPlayed1e = 0, gamesWon1e = 0, winStreak1e = 0, lossStreak1e = 0,
             currentStreak1e = 0;
             int gamesPlayed1m = 0, gamesWon1m = 0, winStreak1m = 0, lossStreak1m = 0,
@@ -324,46 +327,53 @@ public class FourRowSolitaire extends SolitaireBoard implements ActionListener
                 file.createNewFile();
                 DataInputStream input = new DataInputStream(new FileInputStream(file));
 
-                while((input.available() > 0) && count < 31)
+                while((input.available() > 0) && count < 37)
                 {
                     temp = input.readInt();
                     switch(count)
                     {
+                        //case 0 is the format checker
                         case 1: gamesPlayed1e = temp; break;
                         case 2: gamesWon1e = temp; break;
                         case 3: winStreak1e = temp; break;
                         case 4: lossStreak1e = temp; break;
                         case 5: currentStreak1e = temp; break;
-
-                        case 6: gamesPlayed1m = temp; break;
-                        case 7: gamesWon1m = temp; break;
-                        case 8: winStreak1m = temp; break;
-                        case 9: lossStreak1m = temp; break;
-                        case 10: currentStreak1m = temp; break;
-
-                        case 11: gamesPlayed1h = temp; break;
-                        case 12: gamesWon1h = temp; break;
-                        case 13: winStreak1h = temp; break;
-                        case 14: lossStreak1h = temp; break;
-                        case 15: currentStreak1h = temp; break;
-
-                        case 16: gamesPlayed3e = temp; break;
-                        case 17: gamesWon3e = temp; break;
-                        case 18: winStreak3e = temp; break;
-                        case 19: lossStreak3e = temp; break;
-                        case 20: currentStreak3e = temp; break;
-
-                        case 21: gamesPlayed3m = temp; break;
-                        case 22: gamesWon3m = temp; break;
-                        case 23: winStreak3m = temp; break;
-                        case 24: lossStreak3m = temp; break;
-                        case 25: currentStreak3m = temp; break;
-
-                        case 26: gamesPlayed3h = temp; break;
-                        case 27: gamesWon3h = temp; break;
-                        case 28: winStreak3h = temp; break;
-                        case 29: lossStreak3h = temp; break;
-                        case 30: currentStreak3h = temp; break;
+                        case 6: bestTime1e = temp; break;
+    
+                        case 7: gamesPlayed1m = temp; break;
+                        case 8: gamesWon1m = temp; break;
+                        case 9: winStreak1m = temp; break;
+                        case 10: lossStreak1m = temp; break;
+                        case 11: currentStreak1m = temp; break;
+                        case 12: bestTime1m = temp; break;
+    
+                        case 13: gamesPlayed1h = temp; break;
+                        case 14: gamesWon1h = temp; break;
+                        case 15: winStreak1h = temp; break;
+                        case 16: lossStreak1h = temp; break;
+                        case 17: currentStreak1h = temp; break;
+                        case 18: bestTime1h = temp; break;
+    
+                        case 19: gamesPlayed3e = temp; break;
+                        case 20: gamesWon3e = temp; break;
+                        case 21: winStreak3e = temp; break;
+                        case 22: lossStreak3e = temp; break;
+                        case 23: currentStreak3e = temp; break;
+                        case 24: bestTime3e = temp; break;
+    
+                        case 25: gamesPlayed3m = temp; break;
+                        case 26: gamesWon3m = temp; break;
+                        case 27: winStreak3m = temp; break;
+                        case 28: lossStreak3m = temp; break;
+                        case 29: currentStreak3m = temp; break;
+                        case 30: bestTime3m = temp; break;
+    
+                        case 31: gamesPlayed3h = temp; break;
+                        case 32: gamesWon3h = temp; break;
+                        case 33: winStreak3h = temp; break;
+                        case 34: lossStreak3h = temp; break;
+                        case 35: currentStreak3h = temp; break;
+                        case 36: bestTime3h = temp; break;
 
                         default: ; break;
                     }
@@ -447,6 +457,8 @@ public class FourRowSolitaire extends SolitaireBoard implements ActionListener
             "%\n\nBest Streak: " + winStreak1e + "\t\t\tBest Streak: " + winStreak3e + "\n" +
             "Worst Streak: " + lossStreak1e + "\t\tWorst Streak: " + lossStreak3e + "\n" +
             "Current Streak: " + currentStreak1e + "\t\tCurrent Streak: " + currentStreak3e + "\n" +
+            "Best Time: " + (bestTime1e / 60) + " m, " + (bestTime1e % 60) + " s" + "\t\t" + 
+            "Best Time: " + (bestTime3e / 60) + " m, " + (bestTime3e % 60) + " s" + "\n" + 
             "===================================================================\n");
 
             display.append("One-Card Draw (Medium)\t\tThree-Card Draw (Medium)\n" +
@@ -456,6 +468,8 @@ public class FourRowSolitaire extends SolitaireBoard implements ActionListener
             "%\n\nBest Streak: " + winStreak1m + "\t\t\tBest Streak: " + winStreak3m + "\n" +
             "Worst Streak: " + lossStreak1m + "\t\tWorst Streak: " + lossStreak3m + "\n" +
             "Current Streak: " + currentStreak1m + "\t\tCurrent Streak: " + currentStreak3m + "\n" +
+            "Best Time: " + (bestTime1m / 60) + " m, " + (bestTime1m % 60) + " s" + "\t\t" + 
+            "Best Time: " + (bestTime3m / 60) + " m, " + (bestTime3m % 60) + " s" + "\n" + 
             "===================================================================\n");
 
             display.append("One-Card Draw (Hard)\t\tThree-Card Draw (Hard)\n" +
@@ -464,7 +478,10 @@ public class FourRowSolitaire extends SolitaireBoard implements ActionListener
             "Win Percentage: " + winPercentage1h + "%\t\tWin Percentage: " + winPercentage3h +
             "%\n\nBest Streak: " + winStreak1h + "\t\t\tBest Streak: " + winStreak3h + "\n" +
             "Worst Streak: " + lossStreak1h + "\t\tWorst Streak: " + lossStreak3h + "\n" +
-            "Current Streak: " + currentStreak1h + "\t\tCurrent Streak: " + currentStreak3h);
+            "Current Streak: " + currentStreak1h + "\t\tCurrent Streak: " + currentStreak3h + "\n" +
+            "Best Time: " + (bestTime1h / 60) + " m, " + (bestTime1h % 60) + " s" + "\t\t" + 
+            "Best Time: " + (bestTime3h / 60) + " m, " + (bestTime3h % 60) + " s" + "\n");
+            
 
             display.setOpaque(false);
             display.setBorder(null);
@@ -526,19 +543,17 @@ public class FourRowSolitaire extends SolitaireBoard implements ActionListener
 
         else if(e.getSource() == help)
         {
-            JOptionPane.showMessageDialog(this, "This game is a mixture of FreeCell and normal (Klondike) Solitaire.\n" +
-                    "\nSimilarities to FreeCell:\n" +
-                    "   -The Cards in the columns are always visible\n" +
-                    "   -There are four individual cells at the top\n" +
-                    "\nSimilarities to Solitaire:\n" +
-                    "   -There is a deck and discard pile to draw cards from\n" +
-                    "   -Only Kings may be placed at the top of an empty column\n" +
-                    "   -Cards may be removed from the Ace piles and placed back onto the playing field\n" +
-                    "   -Any number of cards can be moved in one move (as long as they are stacked as in Solitaire\n" +
-                    "\nFeatures unique to this game:\n" +
-                    "   -The four individual cells start with cards in them\n" +
-                    "   -You may only go through the deck twice on draw one and three times on draw three\n" +
-                    "   -The obvious: there are only four columns, not 7 or 8 as in Solitaire and FreeCell, respectively",
+            JOptionPane.showMessageDialog(this, "About Four Row Solitaire:\n\n Four Row Solitaire is a game that combines"
+                    + " FreeCell and Four Row Solitaire.\nThe board contains four empty cells, with columns respectively "
+                    + "right under them.\nThere are also four other cells on the right that are organized by suit and must "
+                    + "be stacked in ascending order.\nOnce, all cards have been stacked into the Ace Piles located at the top "
+                    + "right of the screen, the game is won.\n\nObjective:\n"
+                    + "To stack all cards according to their suit in ascending order in the Ace Piles.\n\nValid Moves:\n-Card can be stacked "
+                    + "in descending order but they must be of alternating color.\n-If a column is empty, It can and must"
+                    + " be filled by a King.\n-An ordered stack can also be moved, but the highest card in the stack must "
+                    + "one less than the card it's stacking up against and it should be of opposite color.\n\nMisc.:\n-"
+                    + "There is a deck on the bottom right that must be used, but viewing it is limited.\n-A timer can be "
+                    + "used.",
                     "Help!", JOptionPane.INFORMATION_MESSAGE);
         }
         else if(e.getSource() == about)

@@ -48,7 +48,7 @@ public class CardDrawTest
 	 * @throws FindFailed
 	 * @throws InterruptedException
 	 */
-	@Test(groups = { "functional" })
+	//@Test(groups = { "functional" })
 	public void testCardDraw_OneCard() throws FindFailed, InterruptedException
 	{
 		SikuliXUtil.clickImage("gamemenu.PNG");
@@ -70,7 +70,7 @@ public class CardDrawTest
 	 * @throws FindFailed
 	 * @throws InterruptedException
 	 */
-	@Test(groups = { "functional" })
+	//@Test(groups = { "functional" })
 	public void testCardDraw_ThreeCards() throws FindFailed, InterruptedException
 	{
 		SikuliXUtil.clickImage("gamemenu.PNG");

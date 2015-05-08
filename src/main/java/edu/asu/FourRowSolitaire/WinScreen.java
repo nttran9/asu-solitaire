@@ -24,6 +24,7 @@ import java.awt.event.*;
 import java.io.File;
 import java.net.URL;
 import java.util.Random;
+
 import javax.sound.midi.*;
 import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
@@ -39,7 +40,7 @@ public class WinScreen extends JFrame
 {
     SoundThread sound = null;
 
-    public WinScreen(int animation, int sounds)
+    public WinScreen(int animation, int sounds, SolitaireBoard board)
     {
         setUndecorated(true);
         //setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -71,7 +72,6 @@ public class WinScreen extends JFrame
             this.setLocation(0,0);
             add(new JLabel("Click Here to Stop Music"));
         }
-
         
         setVisible(true);
 
@@ -85,6 +85,20 @@ public class WinScreen extends JFrame
                 }
 
                 WinScreen.this.dispose();
+                
+                int playAgain = JOptionPane.showConfirmDialog(board, "Play Again?", "You Won!", JOptionPane.YES_NO_OPTION);
+
+                if(playAgain == JOptionPane.YES_OPTION)
+                {
+                    board.recordGame(SolitaireBoard.GAME_WON);
+                    
+                    board.newGame(SolitaireBoard.GAME_WON);
+                }
+                else//(playAgain == JOptionPane.NO_OPTION)
+                {
+                    board.recordGame(SolitaireBoard.GAME_WON);
+                    System.exit(0);
+                }
             }
         });
 
