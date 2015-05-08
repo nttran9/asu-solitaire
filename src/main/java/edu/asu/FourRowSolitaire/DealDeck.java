@@ -170,7 +170,8 @@ public class DealDeck extends CardStack
     }
     
     /**
-     * Undo a pop operation.
+     * Undo a pop operation. Should be called when the last move was a reset
+     * on the DiscardPile.
      */
     public synchronized void undoPop()
     {
@@ -183,7 +184,7 @@ public class DealDeck extends CardStack
         
         undone();
         
-        if(!isRedealable)
+        if (!isRedealable)
             isRedealable = true;
         
         discardPile.repaint();

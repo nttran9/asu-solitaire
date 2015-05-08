@@ -49,16 +49,16 @@ public class Deck
     {
         this.deckStyle = deckStyle;
         
-        createStandardDeck();
+        cards = createStandardDeck(deckStyle);
         Collections.shuffle(cards);
     }
     
     /**
      * Create a list of 52 playing cards resembling a standard deck.
      */
-    public void createStandardDeck()
+    public LinkedList<Card> createStandardDeck(int deckStyle)
     {
-        cards = new LinkedList<Card>();
+        LinkedList<Card> cards = new LinkedList<Card>();
         
         for (CardSuit suit : CardSuit.values())
         {
@@ -71,6 +71,8 @@ public class Deck
                 }
             }
         }
+        
+        return cards;
     }
     
     /**

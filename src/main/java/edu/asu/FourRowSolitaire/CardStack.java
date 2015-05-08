@@ -22,6 +22,7 @@ package edu.asu.FourRowSolitaire;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
+import java.util.EmptyStackException;
 import java.util.Vector;
 
 import javax.swing.JLayeredPane;
@@ -70,9 +71,12 @@ public class CardStack extends JLayeredPane
      */
     public Card push(Card card)
     {
-        cards.add(card);
-        card.setBounds(0, 0, CARD_WIDTH, CARD_HEIGHT);
-        add(card, 0);
+        if (card != null)
+        {
+            cards.add(card);
+            card.setBounds(0, 0, CARD_WIDTH, CARD_HEIGHT);
+            add(card, 0);
+        }
         
         return card;
     }
@@ -100,9 +104,13 @@ public class CardStack extends JLayeredPane
      * 
      * @return the card at the top of this CardStack iff this CardStack is not
      * empty; null otherwise
+     * @throw EmptyStackException when an empty stack is popped
      */
     public synchronized Card pop()
     {
+        if (isEmpty())
+            throw new EmptyStackException();
+        
         Card card = peek();
         this.remove(card);
         cards.remove(cards.size() - 1);
@@ -235,14 +243,10 @@ public class CardStack extends JLayeredPane
         CardStack temp = new CardStack();
         int index = length() - numCards;
         
-        // invalid input
-        if (index < 0 || numCards > length())
-            return temp;
-        
         for (int i = length(); i > index; i--)
         {
-            temp.push(getCardAtLocation(cards.size() - i - 1).clone());
-            getCardAtLocation(cards.size() - i - 1).highlight();
+            temp.push(getCardAtLocation(i - 1).clone());
+            getCardAtLocation(i - 1).highlight();
         }
         
         return temp;
@@ -366,8 +370,8 @@ public class CardStack extends JLayeredPane
         
         if (i >= 0)
             return cards.size() - i;
-        
-        return -1;
+        else
+            return -1;
     }
     
     /**

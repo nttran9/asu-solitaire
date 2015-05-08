@@ -1,8 +1,11 @@
 package edu.asu.FourRowSolitaire;
 
+import static org.testng.AssertJUnit.*;
+
+import java.util.HashSet;
 import java.util.LinkedList;
 
-import static org.testng.AssertJUnit.*;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /**
@@ -10,39 +13,25 @@ import org.testng.annotations.Test;
  */
 public class DeckTest
 {
-	/**
-	 * Test passes if there is exactly one instance of each card in the deck 
-	 * after the deck is "shuffled".
-	 */
-	@Test
-	public void testShuffle_VerifyCardSetAfterShuffle()
-	{
-		Deck deck = new Deck(0);
-		deck.shuffle();
-		
-		int[] cardCount = new int[52];
-		LinkedList<Card> cards = deck.getDeck();
-		
-		for (Card card : cards)
-			++cardCount[card.getFullNumber() - 1];
-		
-		for (int count : cardCount)
-			assertEquals(1, count);
-	}
-	
-	/**
-	 * Tests passes if no invalid cards exist in the deck after it is 
-	 * "shuffled".
-	 */
-	@Test
-	public void testShuffle_NoInvalidCardsAfterShuffle()
-	{
-		Deck deck = new Deck(0);
-		deck.shuffle();
-		
-		LinkedList<Card> cards = deck.getDeck();
-		
-		for (Card card : cards)
-			assertFalse(card.getNumber() == -1);
-	}
+    private Deck deck;
+    
+    @BeforeMethod
+    public void setUp()
+    {
+        deck = new Deck(0);
+    }
+    
+    @Test
+    public void testCreateStandardDeck()
+    {
+        LinkedList<Card> cards = deck.createStandardDeck(0);
+        HashSet<Card> cardSet = new HashSet<Card>();
+        
+        for (Card card : cards)
+            cardSet.add(card);
+        
+        // test that each card in the deck is distinct and that there are 52 
+        // cards in the deck
+        assertEquals(52, cardSet.size());
+    }
 }

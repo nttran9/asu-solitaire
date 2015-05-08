@@ -1,63 +1,93 @@
-package test;
+package edu.asu.FourRowSolitaire;
 
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
+import static org.testng.AssertJUnit.*;
+
 import org.testng.annotations.BeforeMethod;
-import org.testng.AssertJUnit;
+import org.testng.annotations.Test;
 
-import FourRowSolitaire.AcePile;
-import FourRowSolitaire.Card;
-import FourRowSolitaire.CardStack;
-
-public class AcePileTest {
-	private AcePile pile1;
-	private Card card1, card2, card3, card4;
-	private CardStack stack;
-
-	@BeforeMethod
-	public void setUp() throws Exception {
-		pile1 = new AcePile(Card.HEARTS_SUIT);
-		stack = new CardStack();
-		
-		card1 = new Card(Card.HEARTS_SUIT, Card.ACE, 1, 3);
-		card2 = new Card(Card.HEARTS_SUIT, Card.EIGHT, 2, 5);
-		card3 = new Card(Card.HEARTS_SUIT, Card.JACK, 3, 6);
-		card4 = new Card(Card.HEARTS_SUIT, Card.FIVE, 8, 43);
-		
-		stack.addCard(card1);
-		stack.addCard(card2);
-		stack.addCard(card3);
-	}
-
-	@AfterMethod
-	public void tearDown() throws Exception {
-		pile1 = null;
-		stack = null;
-		
-		card1 = null;
-		card2 = null;
-		card3 = null;
-		card4 = null;
-	}
-
-	@Test
-	public void testPushCard() {
-		pile1.push(card4);
-		
-		AssertJUnit.assertEquals(card4, pile1.pop());
-		
-	}
-
-	@Test
-	public void testIsValidMoveCard() {
-		pile1.push(stack);
-		
-		AssertJUnit.assertTrue(pile1.isValidMove(card2));
-	}
-
-	@Test
-	public void testIsValidMoveCardStack() {
-		AssertJUnit.assertTrue(pile1.isValidMove(stack));
-	}
-
+/**
+ * @author Nelson Tran (nttran9)
+ * @author Stephen Garcia
+ */
+public class AcePileTest
+{
+    private AcePile pile;
+    
+    @BeforeMethod
+    public void setUp()
+    {
+        pile = null;
+    }
+    
+    @Test
+    public void testIsValidMove()
+    {
+        pile = new AcePile(CardSuit.CLUBS);
+        
+        Card cAce   = new Card(CardSuit.CLUBS, CardNumber.ACE, 0, 0);
+        Card cTwo   = new Card(CardSuit.CLUBS, CardNumber.TWO, 0, 0);
+        Card cThree = new Card(CardSuit.CLUBS, CardNumber.THREE, 0, 0);
+        Card hAce   = new Card(CardSuit.HEARTS, CardNumber.ACE, 0, 0);
+        
+        // wrong suit, right number
+        if (pile.isValidMove(hAce))
+            pile.push(hAce);
+        
+        assertTrue(pile.isEmpty());
+        
+        // right suit, right number
+        if (pile.isValidMove(cAce))
+            pile.push(cAce);
+        
+        assertTrue(!pile.isEmpty());
+        
+        // right suit, wrong number
+        if (pile.isValidMove(cThree))
+            pile.push(cAce);
+        
+        assertEquals(CardNumber.ACE, pile.peek().getNumber());
+        assertEquals(CardSuit.CLUBS, pile.peek().getSuit());
+        
+        // wrong suit, wrong number
+        if (pile.isValidMove(hAce))
+            pile.push(hAce);
+        
+        assertEquals(CardNumber.ACE, pile.peek().getNumber());
+        assertEquals(CardSuit.CLUBS, pile.peek().getSuit());
+        
+        // right suit, right number
+        if (pile.isValidMove(cTwo))
+            pile.push(cTwo);
+        if (pile.isValidMove(cThree))
+            pile.push(cThree);
+        
+        assertEquals(CardNumber.THREE, pile.pop().getNumber());
+        assertEquals(CardNumber.TWO, pile.pop().getNumber());
+        
+        // pushing a stack
+        Card cFour = new Card(CardSuit.CLUBS, CardNumber.ACE, 0, 0);
+        Card cFive = new Card(CardSuit.CLUBS, CardNumber.TWO, 0, 0);
+        Card cSix  = new Card(CardSuit.CLUBS, CardNumber.THREE, 0, 0);
+        
+        CardStack stack = new CardStack();
+        stack.push(cFour);
+        stack.push(cFive);
+        stack.push(cSix);
+        
+        if (pile.isValidMove(stack))
+            pile.push(stack);
+        
+        assertEquals(CardNumber.ACE, pile.peek().getNumber());
+    }
+    
+    @Test
+    public void testGetSuit()
+    {
+        pile = new AcePile(CardSuit.HEARTS);
+        
+        assertEquals(CardSuit.HEARTS, pile.getSuit());
+        assertFalse(CardSuit.CLUBS == pile.getSuit());
+        assertFalse(CardSuit.DIAMONDS == pile.getSuit());
+        assertFalse(CardSuit.SPADES == pile.getSuit());
+    }
 }

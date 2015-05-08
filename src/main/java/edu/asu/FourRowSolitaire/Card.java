@@ -106,6 +106,7 @@ public class Card extends JComponent implements Cloneable
             cardSuit   = CardSuit.INVALID;
             cardNumber = CardNumber.INVALID;
             cardFront  = "images/invalidcard.png";
+            cardBack   = "images/cardbacks/cardback3.png";
         }
         
         setFaceUp();
@@ -298,5 +299,14 @@ public class Card extends JComponent implements Cloneable
     public Card clone()
     {
         return new Card(cardSuit, cardNumber, cardBackStyle, fullCardNumber);
+    }
+    
+    public boolean equals(Card other)
+    {
+        if (other == null)
+            return false;
+        
+        return (getSuit() == ((Card) other).getSuit() &&
+                getNumber() == ((Card) other).getNumber());
     }
 }

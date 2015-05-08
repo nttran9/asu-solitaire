@@ -56,9 +56,9 @@ public class Column extends CardStack
     @Override
     public boolean isValidMove(Card card)
     {
-        if (isEmpty() && isKing(card))
+        if (card != null && isEmpty() && isKing(card))
             return true;
-        else if (!isEmpty() && isDifferentColor(card, peek()) && isOneLess(card, peek()))
+        else if (card != null && !isEmpty() && isDifferentColor(card, peek()) && isOneLess(card, peek()))
             return true;
         else
             return false;
