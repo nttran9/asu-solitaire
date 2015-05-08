@@ -25,6 +25,7 @@ import java.io.*;
 import java.net.URI;
 import java.net.URL;
 import java.util.LinkedList;
+
 import javax.swing.*;
 
 /**
@@ -276,7 +277,19 @@ public class FourRowSolitaire extends SolitaireBoard implements ActionListener
     {
         if(e.getSource() == newGame)
         {
-            super.newGame(0);
+            int check = JOptionPane.showConfirmDialog(this, "Quitting the current game will result in a loss.\n" +
+                    "Do you wish to continue?", "Continue?", JOptionPane.PLAIN_MESSAGE);
+
+            if(check == JOptionPane.YES_OPTION)
+            {
+                super.newGame(0);
+                recordGame(GAME_LOST);
+            }
+            else
+            {
+                //If player wants to continue game
+                return;
+            }
         }
         else if(e.getSource() == undo)
         {
